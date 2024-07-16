@@ -15,8 +15,8 @@ def connectWiFi(max_wait=10):
     
     while wlan.isconnected() == False:
         print('Waiting for connection...')
-        n+=1
-        if n>max_wait:
+        n += 1
+        if n > max_wait:
             machine.reset()
         sleep(1)
         

@@ -32,9 +32,9 @@ while True:
     hour = int(dh[4])
     minute = int(dh[5])
     current_time = rjust(str(hour), 2, "0") + rjust(str(minute), 2, "0")
+    brightness = 127
     dotState = not dotState
     # Refresh clock display
-    refreshClock(current_time, hour+1, dotState)
-    # Wait for a second
+    refreshClock(current_time, hour+1, brightness, dotState)
+    # Wait for 500ms
     sleep(0.5)
-

@@ -14,37 +14,38 @@ DIGITS = 4
 DOTS = 2
 
 colors = [
-  (0x00, 0x00, 0x00), #00- off
-  (0xff, 0x00, 0x00), #01- 00h red
-  (0xff, 0x00, 0x40), #02- 01h crimson
-  (0xff, 0x00, 0x80), #03- 02h rose
-  (0xff, 0x00, 0xc0), #04- 03h cerise
-  (0xff, 0x00, 0xff), #05- 04h magenta
-  (0xc0, 0x00, 0xff), #06- 05h purple
-  (0x80, 0x00, 0xff), #07- 06h violet
-  (0x40, 0x00, 0xff), #08- 07h indigo
-  (0x00, 0x00, 0xff), #09- 08h blue
-  (0x00, 0x40, 0xff), #10- 09h cerulean
-  (0x00, 0x80, 0xff), #11- 10h azure
-  (0x00, 0xc0, 0xff), #12- 11h capri
-  (0x00, 0xff, 0xff), #13- 12h cyan
-  (0x00, 0xff, 0xc0), #14- 13h aquamarine
-  (0x00, 0xff, 0x80), #15- 14h spring green
-  (0x00, 0xff, 0x40), #16- 15h erin
-  (0x00, 0xff, 0x00), #17- 16h green
-  (0x40, 0xff, 0x00), #18- 17h harlequin
-  (0x80, 0xff, 0x00), #19- 18h chartreuse
-  (0xc0, 0xff, 0x00), #20- 19h lime
-  (0xff, 0xff, 0x00), #21- 20h yellow
-  (0xff, 0xc0, 0x00), #22- 21h amber
-  (0xff, 0x80, 0x00), #23- 22h orange
-  (0xff, 0x40, 0x00), #24- 23h vermilion
+  (0x00, 0x00, 0x00), #00 - off
+  (0xff, 0x00, 0x00), #01 - 00h red
+  (0xff, 0x00, 0x40), #02 - 01h crimson
+  (0xff, 0x00, 0x80), #03 - 02h rose
+  (0xff, 0x00, 0xc0), #04 - 03h cerise
+  (0xff, 0x00, 0xff), #05 - 04h magenta
+  (0xc0, 0x00, 0xff), #06 - 05h purple
+  (0x80, 0x00, 0xff), #07 - 06h violet
+  (0x40, 0x00, 0xff), #08 - 07h indigo
+  (0x00, 0x00, 0xff), #09 - 08h blue
+  (0x00, 0x40, 0xff), #10 - 09h cerulean
+  (0x00, 0x80, 0xff), #11 - 10h azure
+  (0x00, 0xc0, 0xff), #12 - 11h capri
+  (0x00, 0xff, 0xff), #13 - 12h cyan
+  (0x00, 0xff, 0xc0), #14 - 13h aquamarine
+  (0x00, 0xff, 0x80), #15 - 14h spring green
+  (0x00, 0xff, 0x40), #16 - 15h erin
+  (0x00, 0xff, 0x00), #17 - 16h green
+  (0x40, 0xff, 0x00), #18 - 17h harlequin
+  (0x80, 0xff, 0x00), #19 - 18h chartreuse
+  (0xc0, 0xff, 0x00), #20 - 19h lime
+  (0xff, 0xff, 0x00), #21 - 20h yellow
+  (0xff, 0xc0, 0x00), #22 - 21h amber
+  (0xff, 0x80, 0x00), #23 - 22h orange
+  (0xff, 0x40, 0x00), #24 - 23h vermilion
+  (0xff, 0xff, 0xff), #25 - white
 ]
 
 pixels = Neopixel((SEGMENTS_BY_DIGIT * LEDS_BY_SEGMENT * DIGITS) + DOTS, 0, 6, "GRB")
 
 def mapDigits(value, dotState):
-    pixels = [0 for x in range((len(value) * SEGMENTS_BY_DIGIT * LEDS_BY_SEGMENT) + DOTS )]
+    pixels = [0 for x in range(len(value) * SEGMENTS_BY_DIGIT * LEDS_BY_SEGMENT)]
 
     for dig in range(len(value)):
         a = [x + (dig * (SEGMENTS_BY_DIGIT * LEDS_BY_SEGMENT)) for x in range(LEDS_BY_SEGMENT)]
@@ -75,14 +76,11 @@ def mapDigits(value, dotState):
                 pixels[pixel] = 1
                 
         if dotState:
-            dotState = False
-            pixels[-1] = 1
-            pixels[-2] = 1
+            dots = [1 for x in range(DOTS)]
         else:
-            dotState = True
-            pixels[-1] = 0
-            pixels[-2] = 0
-            
+            dots = [0 for x in range(DOTS)]
+
+        pixels.extend(dots)
 
     return pixels
 
@@ -91,15 +89,12 @@ def setBrightness(value):
     pixels.brightness(value)
 
 
-def refreshClock(data, color_index=7, dotState=True):
+def refreshClock(data, color_index=1, brightness=127, dotState=True):
     p = mapDigits(data, dotState)
 
+    pixels.brightness(brightness)
+    
     for i in range(len(p)):
-        if i < 56:
-            pixels.brightness(63)
-        else:
-            pixels.brightness(255)
-            
         if p[i]:
             pixels.set_pixel(i, colors[color_index])
         else:
